@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visit Taniti - Interactive Prototype</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; line-height: 1.6; color: #374151; }
+        .nav { position: fixed; top: 0; left: 0; right: 0; background: #0f172a; box-shadow: 0 2px 8px rgba(0,0,0,0.4); z-index: 50; }
+        .nav-container { max-width: 1280px; margin: 0 auto; padding: 0 1.5rem; display: flex; justify-content: space-between; align-items: center; height: 4.5rem; }
+        .nav-logo { display: flex; align-items: center; gap: 0.5rem; font-weight: bold; font-size: 1.25rem; color: white; }
+        .nav-links { display: flex; align-items: center; gap: 2rem; }
+        .nav-links a { color: #cbd5e1; text-decoration: none; transition: color 0.3s; font-size: 1rem; font-weight: 500; }
+        .nav-links a:hover { color: white; }
+        .btn-primary { background: #0d9488; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; border: none; cursor: pointer; transition: background 0.3s; }
+        .btn-primary:hover { background: #0f766e; }
+        .hero { position: relative; height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; color: white; background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1660315247626-12267f8d68db?w=1920') center/cover; }
+        .hero-content { position: relative; z-index: 10; padding: 0 1rem; }
+        .hero h1 { font-size: 4rem; margin-bottom: 1.5rem; font-weight: 700; }
+        .hero p { font-size: 1.5rem; margin-bottom: 2rem; max-width: 42rem; margin-left: auto; margin-right: auto; }
+        section { padding: 5rem 1.5rem; }
+        .section-bg-gray { background: #f9fafb; }
+        .container { max-width: 1280px; margin: 0 auto; }
+        .section-header { text-align: center; margin-bottom: 4rem; }
+        .section-title { font-size: 3rem; color: #111827; margin-bottom: 1rem; }
+        .title-underline { width: 6rem; height: 0.25rem; background: #0d9488; margin: 0 auto 1.5rem; }
+        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 3rem; align-items: center; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+        .grid-4 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+        .card { background: white; border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 1.5rem; transition: box-shadow 0.3s; cursor: pointer; }
+        .card:hover { box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .icon-box { width: 3rem; height: 3rem; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; font-size: 1.5rem; }
+        .stat-box { background: white; padding: 1.5rem; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .stat-number { font-size: 2rem; color: #0d9488; margin-bottom: 0.5rem; }
+        .info-box { background: #ccfbf1; border: 1px solid #5eead4; border-radius: 0.5rem; padding: 2rem; margin-top: 4rem; }
+        .faq-item { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 0.5rem; margin-bottom: 1rem; overflow: hidden; transition: border-color 0.3s; }
+        .faq-item:hover { border-color: #0d9488; }
+        .faq-question { width: 100%; padding: 1.25rem 1.5rem; display: flex; align-items: center; justify-content: space-between; background: none; border: none; cursor: pointer; text-align: left; font-size: 1.125rem; color: #111827; }
+        .faq-answer { padding: 0 1.5rem 1.25rem 4.5rem; color: #4b5563; display: none; }
+        .faq-item.active .faq-answer { display: block; }
+        footer { background: #111827; color: white; padding: 3rem 1.5rem; }
+        footer a { color: #9ca3af; text-decoration: none; transition: color 0.3s; }
+        footer a:hover { color: #5eead4; }
+        .footer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; max-width: 1280px; margin: 0 auto 2rem; }
+        .modal { display: none; position: fixed; inset: 0; z-index: 100; align-items: center; justify-content: center; padding: 1rem; }
+        .modal.active { display: flex; }
+        .modal-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.5); }
+        .modal-content { position: relative; background: white; max-width: 42rem; width: 100%; max-height: 90vh; overflow-y: auto; border-radius: 0.5rem; box-shadow: 0 25px 50px rgba(0,0,0,0.3); }
+        .modal-header { position: sticky; top: 0; background: white; border-bottom: 1px solid #e5e7eb; padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; z-index: 10; }
+        .modal-body { padding: 1.5rem; }
+        .modal-section { padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 1.5rem; }
+        .close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; padding: 0.5rem; border-radius: 0.25rem; transition: background 0.3s; }
+        .close-btn:hover { background: #f3f4f6; }
+
+        .filter-bar { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; margin-bottom: 2.5rem; }
+        .filter-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1.25rem; border-radius: 9999px; border: 2px solid #d1d5db; background: white; color: #374151; font-weight: 600; font-size: 0.875rem; cursor: pointer; transition: all 0.2s; }
+        .filter-btn:hover { border-color: #0d9488; color: #0d9488; }
+        .filter-btn.active { background: #0d9488; color: white; border-color: #0d9488; box-shadow: 0 2px 8px rgba(13,148,136,0.3); }
+        .activity-card-hidden { display: none !important; }
+        .booking-form label { display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem; }
+        .booking-form input, .booking-form select, .booking-form textarea { width: 100%; padding: 0.625rem 1rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; color: #111827; outline: none; margin-bottom: 1rem; }
+        .booking-form input:focus, .booking-form select:focus, .booking-form textarea:focus { border-color: #0d9488; box-shadow: 0 0 0 2px rgba(13,148,136,0.15); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .btn-secondary { background: white; color: #374151; border: 2px solid #d1d5db; padding: 0.75rem 1.5rem; border-radius: 0.5rem; cursor: pointer; font-weight: 500; transition: all 0.2s; font-size: 1rem; }
+        .btn-secondary:hover { border-color: #374151; }
+        .booking-success { text-align: center; padding: 1rem; }
+        .check-circle { width: 5rem; height: 5rem; background: #ccfbf1; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; font-size: 2.5rem; }
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hero h1 { font-size: 2.5rem; }
+            .grid-2, .grid-3, .grid-4, .footer-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-container">
+            <div class="nav-logo"><i class="fas fa-map-marker-alt"></i> Visit Taniti</div>
+            <div class="nav-links">
+                <a href="#about">About</a>
+                <a href="#things-to-do">Things to Do</a>
+                <a href="#dining">Dining</a>
+                <a href="#lodging">Lodging</a>
+                <a href="#transportation">Transportation</a>
+                <a href="#faq">FAQ</a>
+                <button class="btn-primary" onclick="openModal()">Plan Your Trip</button>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Welcome to Taniti</h1>
+            <p>A tropical paradise where pristine beaches meet lush rainforests and adventure awaits</p>
+            <button class="btn-primary" onclick="document.getElementById('about').scrollIntoView({behavior: 'smooth'})">Discover Taniti</button>
+        </div>
+    </section>
+
+    <section id="about" class="section-bg-gray">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">About the Island</h2>
+                <div class="title-underline"></div>
+            </div>
+            <div class="grid-2">
+                <div>
+                    <p style="font-size: 1.125rem; margin-bottom: 1.5rem;">Taniti is a small, tropical island in the Pacific with an area of less than 500 square miles. Our diverse terrain includes sandy and rocky beaches, a small but safe harbor, lush tropical rainforests, and a mountainous interior featuring a small, active volcano.</p>
+                    <p style="font-size: 1.125rem; margin-bottom: 1.5rem;">Home to approximately 20,000 indigenous Tanitians, our island has recently opened its doors to tourism while maintaining its authentic cultural heritage.</p>
+                    <div class="grid-2" style="margin-top: 2rem;">
+                        <div class="stat-box"><div class="stat-number">500</div><div style="color: #4b5563;">Square Miles</div></div>
+                        <div class="stat-box"><div class="stat-number">20k</div><div style="color: #4b5563;">Population</div></div>
+                    </div>
+                </div>
+                <div><img src="https://images.unsplash.com/photo-1660315247626-12267f8d68db?w=600" alt="Beach" style="width: 100%; height: 400px; object-fit: cover; border-radius: 0.5rem;"></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="things-to-do">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Things to Do</h2>
+                <div class="title-underline"></div>
+                <p style="font-size: 1.25rem; color: #4b5563;">From pristine beaches to rainforest adventures, Taniti offers countless activities</p>
+            </div>
+            <div class="filter-bar">
+                <button class="filter-btn active" onclick="filterActivities('all', this)">&#127904; All Activities</button>
+                <button class="filter-btn" onclick="filterActivities('outdoor', this)">&#9728; Outdoor</button>
+                <button class="filter-btn" onclick="filterActivities('indoor', this)">&#127970; Indoor</button>
+                <button class="filter-btn" onclick="filterActivities('family', this)">&#128106; Family-Friendly</button>
+            </div>
+            <div class="grid-3" id="activity-grid">
+                <div class="card" onclick="openActivityModal('beach')" data-filter="outdoor,family"><div class="icon-box" style="background: #dbeafe; color: #2563eb;"><i class="fas fa-water"></i></div><h3>Beach Activities</h3><p style="color: #4b5563; margin-bottom: 0.5rem;">Enjoy pristine sandy beaches around Yellow Leaf Bay</p><p style="font-size: 0.875rem;">Click for details →</p></div>
+                <div class="card" onclick="openActivityModal('rainforest')" data-filter="outdoor"><div class="icon-box" style="background: #dcfce7; color: #16a34a;"><i class="fas fa-tree"></i></div><h3>Rainforest Exploration</h3><p style="color: #4b5563; margin-bottom: 0.5rem;">Hike through lush rainforests and zip-lining adventures</p><p style="font-size: 0.875rem;">Click for details →</p></div>
+                <div class="card" onclick="openActivityModal('volcano')" data-filter="outdoor"><div class="icon-box" style="background: #fee2e2; color: #dc2626;"><i class="fas fa-mountain"></i></div><h3>Volcano Tours</h3><p style="color: #4b5563; margin-bottom: 0.5rem;">Visit our small, active volcano</p><p style="font-size: 0.875rem;">Click for details →</p></div>
+                <div class="card" onclick="openActivityModal('fishing')" data-filter="outdoor,family"><div class="icon-box" style="background: #cffafe; color: #0891b2;"><i class="fas fa-fish"></i></div><h3>Fishing & Snorkeling Tours</h3><p style="color: #4b5563; margin-bottom: 0.5rem;">Charter fishing tours and explore underwater worlds</p><p style="font-size: 0.875rem;">Click for details →</p></div>
+                <div class="card" onclick="openActivityModal('sightseeing')" data-filter="outdoor,family"><div class="icon-box" style="background: #f3e8ff; color: #9333ea;"><i class="fas fa-camera"></i></div><h3>Sightseeing</h3><p style="color: #4b5563; margin-bottom: 0.5rem;">Boat or bus tours of the island</p><p style="font-size: 0.875rem;">Click for details →</p></div>
+                <div class="card" onclick="openActivityModal('helicopter')" data-filter="outdoor,family"><div class="icon-box" style="background: #fed7aa; color: #ea580c;"><i class="fas fa-helicopter"></i></div><h3>Helicopter Rides</h3><p style="color: #4b5563; margin-bottom: 0.5rem;">Aerial views of the entire island</p><p style="font-size: 0.875rem;">Click for details →</p></div>
+                <div class="card" onclick="openActivityModal('culture')" data-filter="indoor,family"><div class="icon-box" style="background: #fce7f3; color: #db2777;"><i class="fas fa-palette"></i></div><h3>Culture & Arts</h3><p style="color: #4b5563; margin-bottom: 0.5rem;">Visit the local history museum and art galleries</p><p style="font-size: 0.875rem;">Click for details →</p></div>
+                <div class="card" onclick="openActivityModal('nightlife')" data-filter="indoor"><div class="icon-box" style="background: #e0e7ff; color: #6366f1;"><i class="fas fa-music"></i></div><h3>Nightlife</h3><p style="color: #4b5563; margin-bottom: 0.5rem;">Dance clubs, pubs, and local microbrewery</p><p style="font-size: 0.875rem;">Click for details →</p></div>
+                <div class="card" onclick="openActivityModal('entertainment')" data-filter="indoor,family"><div class="icon-box" style="background: #fef3c7; color: #f59e0b;"><i class="fas fa-film"></i></div><h3>Entertainment</h3><p style="color: #4b5563; margin-bottom: 0.5rem;">Movie theater, arcade, and bowling</p><p style="font-size: 0.875rem;">Click for details →</p></div>
+                <div class="card" onclick="openActivityModal('golf')" data-filter="outdoor,family"><div class="icon-box" style="background: #ccfbf1; color: #0d9488;"><i class="fas fa-golf-ball"></i></div><h3>Golf Course</h3><p style="color: #4b5563; margin-bottom: 0.5rem;">Nine-hole golf course opening next year</p><p style="font-size: 0.875rem;">Click for details →</p></div>
+            </div>
+            <div class="info-box">
+                <h3 style="font-size: 1.5rem; margin-bottom: 1rem;">Merriton Landing</h3>
+                <p>Many activities are located in <strong>Merriton Landing</strong>, a rapidly developing area on the north side of Yellow Leaf Bay.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="dining" class="section-bg-gray">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Dining</h2>
+                <div class="title-underline"></div>
+                <p style="font-size: 1.25rem; color: #4b5563;">10 restaurants featuring a variety of cuisines</p>
+            </div>
+            <div class="grid-3">
+                <div class="card" onclick="openDiningModal('local')" style="text-align: center;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;"><i class="fas fa-fish"></i></div>
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">5</div>
+                    <h3 style="margin-bottom: 0.5rem;">Local Cuisine</h3>
+                    <p style="color: #4b5563; margin-bottom: 0.5rem;">Fresh local fish and rice</p>
+                    <p style="font-size: 0.875rem;">Click for details →</p>
+                </div>
+                <div class="card" onclick="openDiningModal('american')" style="text-align: center;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;"><i class="fas fa-hamburger"></i></div>
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">3</div>
+                    <h3 style="margin-bottom: 0.5rem;">American Style</h3>
+                    <p style="color: #4b5563; margin-bottom: 0.5rem;">American-style meals</p>
+                    <p style="font-size: 0.875rem;">Click for details →</p>
+                </div>
+                <div class="card" onclick="openDiningModal('panasian')" style="text-align: center;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;"><i class="fas fa-utensils"></i></div>
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">2</div>
+                    <h3 style="margin-bottom: 0.5rem;">Pan-Asian</h3>
+                    <p style="color: #4b5563; margin-bottom: 0.5rem;">Pan-Asian cuisine</p>
+                    <p style="font-size: 0.875rem;">Click for details →</p>
+                </div>
+            </div>
+            <div style="background: white; border-radius: 0.5rem; padding: 2rem; margin-top: 3rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                <h3 style="font-size: 1.5rem; margin-bottom: 1.5rem;">Grocery Shopping</h3>
+                <div class="grid-2">
+                    <div>
+                        <h4 style="font-size: 1.125rem; margin-bottom: 0.75rem;">Supermarkets</h4>
+                        <p style="color: #4b5563;">Two full-service supermarkets offer a wide selection of local and international products</p>
+                    </div>
+                    <div>
+                        <h4 style="font-size: 1.125rem; margin-bottom: 0.75rem;">Smaller Stores</h4>
+                        <p style="color: #4b5563;">Two smaller grocery stores and one 24-hour convenience store for your essentials</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="lodging">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Where to Stay</h2>
+                <div class="title-underline"></div>
+                <p style="font-size: 1.25rem; color: #4b5563;">From luxury resorts to cozy B&Bs</p>
+            </div>
+            <div class="grid-2">
+                <div onclick="openLodgingModal('resort')" style="position: relative; overflow: hidden; border-radius: 0.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); cursor: pointer; transition: box-shadow 0.3s;">
+                    <img src="https://images.unsplash.com/photo-1699019493395-8a1f0c7883a9?w=600" alt="Resort" style="width: 100%; height: 20rem; object-fit: cover;">
+                    <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0.3), transparent);"></div>
+                    <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 1.5rem; color: white;">
+                        <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.75rem;">
+                            <i class="fas fa-star"></i> Four-Star Resort
+                        </h3>
+                        <p style="color: rgba(255,255,255,0.9);">One large, luxury resort with world-class amenities</p>
+                        <p style="margin-top: 0.5rem; color: rgba(255,255,255,0.9); font-size: 0.875rem;">Click for details →</p>
+                    </div>
+                </div>
+                <div onclick="openLodgingModal('hotel')" style="position: relative; overflow: hidden; border-radius: 0.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); cursor: pointer; transition: box-shadow 0.3s;">
+                    <img src="https://images.unsplash.com/photo-1715322001435-0954aa0ff87c?w=600" alt="Hotel" style="width: 100%; height: 20rem; object-fit: cover;">
+                    <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0.3), transparent);"></div>
+                    <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 1.5rem; color: white;">
+                        <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.75rem;">
+                            <i class="fas fa-hotel"></i> Family Hotels
+                        </h3>
+                        <p style="color: rgba(255,255,255,0.9);">Many small, family-owned hotels offering authentic hospitality</p>
+                        <p style="margin-top: 0.5rem; color: rgba(255,255,255,0.9); font-size: 0.875rem;">Click for details →</p>
+                    </div>
+                </div>
+                <div onclick="openLodgingModal('bnb')" style="position: relative; overflow: hidden; border-radius: 0.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); cursor: pointer; transition: box-shadow 0.3s;">
+                    <img src="https://images.unsplash.com/photo-1777545028730-81c7c95608b3?w=600" alt="Bed & Breakfast" style="width: 100%; height: 20rem; object-fit: cover;">
+                    <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0.3), transparent);"></div>
+                    <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 1.5rem; color: white;">
+                        <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.75rem;">
+                            <i class="fas fa-home"></i> Bed & Breakfasts
+                        </h3>
+                        <p style="color: rgba(255,255,255,0.9);">A growing number of charming B&Bs throughout the island</p>
+                        <p style="margin-top: 0.5rem; color: rgba(255,255,255,0.9); font-size: 0.875rem;">Click for details →</p>
+                    </div>
+                </div>
+                <div onclick="openLodgingModal('hostel')" style="position: relative; overflow: hidden; border-radius: 0.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); cursor: pointer; transition: box-shadow 0.3s;">
+                    <img src="https://images.unsplash.com/photo-1660207766597-b3ea1c6d5c37?w=600" alt="Hostel" style="width: 100%; height: 20rem; object-fit: cover;">
+                    <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0.3), transparent);"></div>
+                    <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 1.5rem; color: white;">
+                        <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.75rem;">
+                            <i class="fas fa-building"></i> Budget Hostel
+                        </h3>
+                        <p style="color: rgba(255,255,255,0.9);">An inexpensive hostel perfect for budget travelers</p>
+                        <p style="margin-top: 0.5rem; color: rgba(255,255,255,0.9); font-size: 0.875rem;">Click for details →</p>
+                    </div>
+                </div>
+            </div>
+            <div class="info-box">
+                <p><strong>Regulated & Safe:</strong> All lodging is strictly regulated and regularly inspected by the Tanitian government.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="transportation" class="section-bg-gray">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Getting Around</h2>
+                <div class="title-underline"></div>
+            </div>
+            <h3 style="text-align: center; margin-bottom: 2rem;">Arriving at Taniti</h3>
+            <div class="grid-2" style="margin-bottom: 3rem;">
+                <div class="card" onclick="openArrivalModal('air')" style="cursor: pointer;"><h4><i class="fas fa-plane"></i> By Air</h4><p style="margin-bottom: 0.5rem;">Small airport accommodating jets and propeller planes. Expansion underway for larger jets.</p><p style="font-size: 0.875rem;">Click for details →</p></div>
+                <div class="card" onclick="openArrivalModal('sea')" style="cursor: pointer;"><h4><i class="fas fa-ship"></i> By Sea</h4><p style="margin-bottom: 0.5rem;">Small cruise ship docks at Yellow Leaf Bay once per week</p><p style="font-size: 0.875rem;">Click for details →</p></div>
+            </div>
+            <h3 style="text-align: center; margin-bottom: 2rem;">Ground Transportation</h3>
+            <div class="grid-3">
+                <div class="card" onclick="openTransportModal('publicbus')"><h4><i class="fas fa-bus"></i> Public Buses</h4><p style="margin-bottom: 0.5rem;">Serve Taniti City, 5am-11pm daily</p><p style="font-size: 0.875rem;">Click for details →</p></div>
+                <div class="card" onclick="openTransportModal('privatebus')"><h4><i class="fas fa-bus"></i> Private Buses</h4><p style="margin-bottom: 0.5rem;">Serve the rest of the island</p><p style="font-size: 0.875rem;">Click for details →</p></div>
+                <div class="card" onclick="openTransportModal('taxi')"><h4><i class="fas fa-taxi"></i> Taxis</h4><p style="margin-bottom: 0.5rem;">Available throughout Taniti City</p><p style="font-size: 0.875rem;">Click for details →</p></div>
+                <div class="card" onclick="openTransportModal('rental')"><h4><i class="fas fa-car"></i> Rental Cars</h4><p style="margin-bottom: 0.5rem;">Available near the airport</p><p style="font-size: 0.875rem;">Click for details →</p></div>
+                <div class="card" onclick="openTransportModal('bicycle')"><h4><i class="fas fa-bicycle"></i> Bicycles</h4><p style="margin-bottom: 0.5rem;">Bikes and helmets available</p><p style="font-size: 0.875rem;">Click for details →</p></div>
+            </div>
+
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 2rem; margin-top: 2rem;">
+                <h3 style="text-align: center; margin-bottom: 2rem; font-size: 1.5rem; color: #111827;">Shuttle Services &amp; Pickup Points</h3>
+                <div class="grid-2">
+                    <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                        <div style="width: 3rem; height: 3rem; background: #ccfbf1; color: #0d9488; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.25rem;"><i class="fas fa-hotel"></i></div>
+                        <div>
+                            <h4 style="font-size: 1.125rem; margin-bottom: 0.5rem;">Hotel Shuttle Service</h4>
+                            <ul style="list-style: none; padding: 0; color: #4b5563; font-size: 0.9375rem;">
+                                <li style="margin-bottom: 0.4rem;">• The four-star resort offers <strong>complimentary airport transfers</strong> for guests</li>
+                                <li style="margin-bottom: 0.4rem;">• Most family hotels can arrange shared shuttle pickup — ask at check-in</li>
+                                <li style="margin-bottom: 0.4rem;">• Shuttle schedules align with major flight arrivals and the weekly cruise ship dock</li>
+                                <li style="margin-bottom: 0.4rem;">• Book shuttle service at least 24 hours in advance through your accommodation</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                        <div style="width: 3rem; height: 3rem; background: #fed7aa; color: #ea580c; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.25rem;"><i class="fas fa-map-marker-alt"></i></div>
+                        <div>
+                            <h4 style="font-size: 1.125rem; margin-bottom: 0.5rem;">Activity Pickup Locations</h4>
+                            <ul style="list-style: none; padding: 0; color: #4b5563; font-size: 0.9375rem;">
+                                <li style="margin-bottom: 0.4rem;">• <strong>Rainforest &amp; Volcano tours</strong> depart from Merriton Landing square (8 AM daily)</li>
+                                <li style="margin-bottom: 0.4rem;">• <strong>Fishing &amp; snorkeling charters</strong> board at Yellow Leaf Bay marina</li>
+                                <li style="margin-bottom: 0.4rem;">• <strong>Helicopter tours</strong> depart from the airport helipad</li>
+                                <li style="margin-bottom: 0.4rem;">• <strong>Bus sightseeing tours</strong> pick up at major hotels on request — confirm when booking</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="info-box" style="margin-top: 2rem;">
+                <p><strong><i class="fas fa-exclamation-triangle"></i> Safety Reminder:</strong> Helmets are required by law when cycling. All rental vendors provide helmets with bike rentals.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="faq">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Frequently Asked Questions</h2>
+                <div class="title-underline"></div>
+            </div>
+            <div style="max-width: 56rem; margin: 0 auto;">
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFAQ(this)">
+                        <div style="display: flex; align-items: center; gap: 1rem;"><div style="width: 2.5rem; height: 2.5rem; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: #ccfbf1; color: #0d9488;"><i class="fas fa-dollar-sign"></i></div><span>What currency is used?</span></div><span>▼</span>
+                    </button>
+                    <div class="faq-answer"><p>Taniti uses the U.S. dollar, but many businesses also accept euros and yen. Major credit cards accepted.</p></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFAQ(this)">
+                        <div style="display: flex; align-items: center; gap: 1rem;"><div style="width: 2.5rem; height: 2.5rem; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: #fef3c7; color: #f59e0b;"><i class="fas fa-bolt"></i></div><span>What about power outlets?</span></div><span>▼</span>
+                    </button>
+                    <div class="faq-answer"><p>Power outlets are 120 volts (US standard). No adapter needed for US devices.</p></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFAQ(this)">
+                        <div style="display: flex; align-items: center; gap: 1rem;"><div style="width: 2.5rem; height: 2.5rem; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: #f3e8ff; color: #9333ea;"><i class="fas fa-wine-glass"></i></div><span>What are the alcohol laws?</span></div><span>▼</span>
+                    </button>
+                    <div class="faq-answer"><p>Alcohol cannot be served between midnight and 9:00 AM. Drinking age is 18.</p></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFAQ(this)">
+                        <div style="display: flex; align-items: center; gap: 1rem;"><div style="width: 2.5rem; height: 2.5rem; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: #dbeafe; color: #2563eb;"><i class="fas fa-globe"></i></div><span>Is English widely spoken?</span></div><span>▼</span>
+                    </button>
+                    <div class="faq-answer"><p>Many younger Tanitians speak fluent English. Very little English in rural areas.</p></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFAQ(this)">
+                        <div style="display: flex; align-items: center; gap: 1rem;"><div style="width: 2.5rem; height: 2.5rem; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: #fce7f3; color: #db2777;"><i class="fas fa-heartbeat"></i></div><span>What medical facilities are available?</span></div><span>▼</span>
+                    </button>
+                    <div class="faq-answer"><p>Taniti has one hospital with many multilingual employees and several clinics throughout the island.</p></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFAQ(this)">
+                        <div style="display: flex; align-items: center; gap: 1rem;"><div style="width: 2.5rem; height: 2.5rem; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: #dcfce7; color: #16a34a;"><i class="fas fa-shield-alt"></i></div><span>How safe is Taniti?</span></div><span>▼</span>
+                    </button>
+                    <div class="faq-answer"><p>Violent crime is very rare. Some pickpocketing reported as tourism increases. Use normal precautions.</p></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFAQ(this)">
+                        <div style="display: flex; align-items: center; gap: 1rem;"><div style="width: 2.5rem; height: 2.5rem; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: #fed7aa; color: #ea580c;"><i class="fas fa-calendar"></i></div><span>Are there any holiday closures?</span></div><span>▼</span>
+                    </button>
+                    <div class="faq-answer"><p>Taniti enjoys a large number of national holidays. Many tourist attractions and restaurants will be closed on holidays, so visitors should plan accordingly.</p></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-grid">
+            <div>
+                <div style="font-size: 1.25rem; margin-bottom: 1rem;"><i class="fas fa-map-marker-alt"></i> Visit Taniti</div>
+                <p style="color: #9ca3af;">Discover the beauty of our tropical paradise.</p>
+            </div>
+            <div>
+                <h3 style="margin-bottom: 1rem;">Quick Links</h3>
+                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <a href="#about">About</a>
+                    <a href="#things-to-do">Things to Do</a>
+                    <a href="#dining">Dining</a>
+                    <a href="#lodging">Lodging</a>
+                </div>
+            </div>
+            <div>
+                <h3 style="margin-bottom: 1rem;">Contact</h3>
+                <p style="color: #9ca3af;"><i class="fas fa-envelope"></i> info@visittaniti.com</p>
+                <p style="color: #9ca3af;"><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+            </div>
+            <div>
+                <h3 style="margin-bottom: 1rem;">Follow Us</h3>
+                <div style="display: flex; gap: 1rem;">
+                    <a href="#"><i class="fab fa-facebook fa-2x"></i></a>
+                    <a href="#"><i class="fab fa-instagram fa-2x"></i></a>
+                    <a href="#"><i class="fab fa-twitter fa-2x"></i></a>
+                </div>
+            </div>
+        </div>
+        <div style="border-top: 1px solid #374151; padding-top: 2rem; text-align: center; color: #9ca3af;">
+            <p>&copy; 2026 Visit Taniti. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Activity Modal -->
+    <div id="activityModal" class="modal">
+        <div class="modal-backdrop" onclick="closeActivityModal()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="activityModalTitle" style="font-size: 1.5rem; margin: 0;"></h2>
+                <button class="close-btn" onclick="closeActivityModal()">✕</button>
+            </div>
+            <div id="activityModalBody" class="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- Dining Modal -->
+    <div id="diningModal" class="modal">
+        <div class="modal-backdrop" onclick="closeDiningModal()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="diningModalTitle" style="font-size: 1.5rem; margin: 0;"></h2>
+                <button class="close-btn" onclick="closeDiningModal()">✕</button>
+            </div>
+            <div id="diningModalBody" class="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- Transport Modal -->
+    <div id="transportModal" class="modal">
+        <div class="modal-backdrop" onclick="closeTransportModal()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="transportModalTitle" style="font-size: 1.5rem; margin: 0;"></h2>
+                <button class="close-btn" onclick="closeTransportModal()">✕</button>
+            </div>
+            <div id="transportModalBody" class="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- Lodging Modal -->
+    <div id="lodgingModal" class="modal">
+        <div class="modal-backdrop" onclick="closeLodgingModal()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="lodgingModalTitle" style="font-size: 1.5rem; margin: 0;"></h2>
+                <button class="close-btn" onclick="closeLodgingModal()">✕</button>
+            </div>
+            <div id="lodgingModalBody" class="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- Arrival Modal -->
+    <div id="arrivalModal" class="modal">
+        <div class="modal-backdrop" onclick="closeArrivalModal()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="arrivalModalTitle" style="font-size: 1.5rem; margin: 0;"></h2>
+                <button class="close-btn" onclick="closeArrivalModal()">✕</button>
+            </div>
+            <div id="arrivalModalBody" class="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- Trip Planning Modal -->
+    <div id="tripModal" class="modal">
+        <div class="modal-backdrop" onclick="closeModal()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 style="font-size: 1.5rem; margin: 0;">Plan Your Trip to Taniti</h2>
+                <button class="close-btn" onclick="closeModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-section" style="background: #ccfbf1; border: 1px solid #5eead4;">
+                    <div style="display: flex; gap: 1rem; align-items: start;">
+                        <div style="width: 3rem; height: 3rem; background: #0d9488; color: white; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.5rem;"><i class="fas fa-calendar"></i></div>
+                        <div>
+                            <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem; color: #111827;">Best Time to Visit</h3>
+                            <p style="color: #374151;">Taniti has a tropical climate year-round. Check our national holiday calendar before booking, as many attractions close during holidays.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-section" style="background: #dbeafe; border: 1px solid #93c5fd;">
+                    <div style="display: flex; gap: 1rem; align-items: start;">
+                        <div style="width: 3rem; height: 3rem; background: #2563eb; color: white; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.5rem;"><i class="fas fa-plane"></i></div>
+                        <div>
+                            <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem; color: #111827;">Getting Here</h3>
+                            <p style="color: #374151; margin-bottom: 0.5rem;">Most visitors arrive by air at our small airport. A weekly cruise ship also stops at Yellow Leaf Bay.</p>
+                            <p style="color: #374151;"><strong>Airport expansion in progress</strong> - larger jets will be accommodated soon!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-section" style="background: #dcfce7; border: 1px solid #86efac;">
+                    <div style="display: flex; gap: 1rem; align-items: start;">
+                        <div style="width: 3rem; height: 3rem; background: #16a34a; color: white; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.5rem;"><i class="fas fa-dollar-sign"></i></div>
+                        <div>
+                            <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem; color: #111827;">Budget Planning</h3>
+                            <ul style="list-style: none; padding: 0; color: #374151;">
+                                <li style="margin-bottom: 0.5rem;">• <strong>Currency:</strong> U.S. Dollar (Euros and Yen also accepted)</li>
+                                <li style="margin-bottom: 0.5rem;">• <strong>Lodging:</strong> Options from budget hostels to 4-star resorts</li>
+                                <li style="margin-bottom: 0.5rem;">• <strong>Dining:</strong> 10 restaurants with varied price points</li>
+                                <li>• <strong>Cards:</strong> Major credit cards accepted at most businesses</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-section" style="background: #f3e8ff; border: 1px solid #d8b4fe;">
+                    <div style="display: flex; gap: 1rem; align-items: start;">
+                        <div style="width: 3rem; height: 3rem; background: #9333ea; color: white; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.5rem;"><i class="fas fa-info-circle"></i></div>
+                        <div>
+                            <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem; color: #111827;">Essential Information</h3>
+                            <ul style="list-style: none; padding: 0; color: #374151;">
+                                <li style="margin-bottom: 0.5rem;">• <strong>Power:</strong> 120 volts (US standard)</li>
+                                <li style="margin-bottom: 0.5rem;">• <strong>Language:</strong> English widely spoken in cities</li>
+                                <li style="margin-bottom: 0.5rem;">• <strong>Safety:</strong> Very safe - take normal precautions</li>
+                                <li style="margin-bottom: 0.5rem;">• <strong>Medical:</strong> One hospital with multilingual staff</li>
+                                <li>• <strong>Drinking Age:</strong> 18 years old</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: #f9fafb; border-radius: 0.5rem; padding: 1.5rem; text-align: center;">
+                    <h3 style="font-size: 1.25rem; margin-bottom: 0.75rem; color: #111827;">Ready to Book?</h3>
+                    <p style="color: #4b5563; margin-bottom: 1rem;">Contact our tourism office for accommodation recommendations and tour bookings.</p>
+                    <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
+                        <button onclick="alert('📧 Email Us\\n\\nThis would open your email client to send a message to:\\ninfo@visittaniti.com')" class="btn-primary">Email Us</button>
+                        <button onclick="alert('📞 Call Us\\n\\nThis would dial:\\n+1 (555) 123-4567')" style="background: #e5e7eb; color: #111827; padding: 0.5rem 1rem; border-radius: 0.5rem; border: none; cursor: pointer;">Call Us</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Booking Modal -->
+    <div id="bookingModal" class="modal">
+        <div class="modal-backdrop" onclick="closeBookingModal()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="bookingModalTitle" style="font-size: 1.5rem; color: #111827;">Book Now</h2>
+                <button onclick="closeBookingModal()" class="close-btn">&#10005;</button>
+            </div>
+            <div class="modal-body" id="bookingModalBody"></div>
+        </div>
+    </div>
+
+    <script>
+
+        function filterActivities(filter, btn) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.querySelectorAll('#activity-grid .card').forEach(card => {
+                if (filter === 'all') {
+                    card.classList.remove('activity-card-hidden');
+                } else {
+                    const filters = card.getAttribute('data-filter') || '';
+                    if (filters.split(',').includes(filter)) {
+                        card.classList.remove('activity-card-hidden');
+                    } else {
+                        card.classList.add('activity-card-hidden');
+                    }
+                }
+            });
+        }
+
+        let _bookingContext = '';
+        let _bookingTitle = '';
+
+        function openBookingModal(context, title) {
+            _bookingContext = context;
+            _bookingTitle = title;
+            const isLodging = context === 'lodging';
+            document.getElementById('bookingModalTitle').textContent = isLodging ? 'Book Your Stay' : 'Book This Activity';
+            const dateFields = isLodging
+                ? `<div class="form-row"><div><label>Check-In Date *</label><input type="date" id="bk-checkin" required></div><div><label>Check-Out Date *</label><input type="date" id="bk-checkout" required></div></div>`
+                : `<div class="form-row"><div><label>Preferred Date *</label><input type="date" id="bk-date" required></div><div><label>Number of Guests *</label><select id="bk-guests">${[1,2,3,4,5,6,7,8,10,12].map(n=>`<option value="${n}">${n} guest${n>1?'s':''}</option>`).join('')}</select></div></div>`;
+            document.getElementById('bookingModalBody').innerHTML = `
+                <form class="booking-form" onsubmit="submitBooking(event)">
+                    <p style="color:#4b5563; margin-bottom:1.5rem;">Booking: <strong>${title}</strong><br>Fill in your details and we'll confirm by email within 24 hours.</p>
+                    <div class="form-row">
+                        <div><label>Full Name *</label><input type="text" id="bk-name" placeholder="Jane Smith" required></div>
+                        <div><label>Email Address *</label><input type="email" id="bk-email" placeholder="jane@example.com" required></div>
+                    </div>
+                    ${dateFields}
+                    <div><label>Special Requests</label><textarea id="bk-notes" rows="3" placeholder="Dietary needs, accessibility requirements, or questions..."></textarea></div>
+                    <div style="display:flex; gap:1rem; margin-top:0.5rem;">
+                        <button type="button" class="btn-secondary" onclick="closeBookingModal()" style="flex:1;">Cancel</button>
+                        <button type="submit" class="btn-primary" style="flex:1; padding:0.75rem; font-size:1rem;">Confirm Booking</button>
+                    </div>
+                </form>
+            `;
+            document.getElementById('bookingModal').classList.add('active');
+        }
+
+        function submitBooking(event) {
+            event.preventDefault();
+            const name = document.getElementById('bk-name').value.split(' ')[0] || 'traveler';
+            const email = document.getElementById('bk-email').value;
+            document.getElementById('bookingModalBody').innerHTML = `
+                <div class="booking-success">
+                    <div class="check-circle">&#10003;</div>
+                    <h3 style="font-size:1.5rem; color:#111827; margin-bottom:0.75rem;">You're all set, ${name}!</h3>
+                    <p style="color:#4b5563; margin-bottom:1.5rem;">Your booking request for <strong>${_bookingTitle.replace(/^[^\w]+/, '')}</strong> has been received.</p>
+                    <div style="background:#ccfbf1; border:1px solid #5eead4; border-radius:0.5rem; padding:1rem; margin-bottom:1.5rem; text-align:left;">
+                        <p style="color:#374151; font-size:0.875rem;">A confirmation will be sent to <strong>${email}</strong> within 24 hours. Questions? Email <strong>info@visittaniti.com</strong>.</p>
+                    </div>
+                    <button onclick="closeBookingModal()" class="btn-primary" style="padding:0.75rem 2rem;">Done</button>
+                </div>
+            `;
+        }
+
+        function closeBookingModal() {
+            document.getElementById('bookingModal').classList.remove('active');
+        }
+        function toggleFAQ(button) {
+            const faqItem = button.parentElement;
+            const wasActive = faqItem.classList.contains('active');
+            document.querySelectorAll('.faq-item').forEach(item => item.classList.remove('active'));
+            if (!wasActive) faqItem.classList.add('active');
+        }
+
+        function openModal() {
+            document.getElementById('tripModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('tripModal').classList.remove('active');
+        }
+
+
+        const arrivalData = {
+            air: {
+                title: '✈️ Arriving by Air',
+                description: 'Most visitors arrive at our small but modern airport, with expansion underway.',
+                details: [
+                    'Small airport accommodating jets and propeller planes',
+                    'Daily flights from major Pacific hubs',
+                    'Modern terminal with basic amenities',
+                    'Immigration and customs on-site',
+                    'Currency exchange available',
+                    'Car rental desks in arrivals area'
+                ],
+                facilities: 'Airport facilities include a small café, gift shop, and free Wi-Fi throughout the terminal',
+                transport: 'Taxis and rental cars available immediately outside arrivals. Public buses connect to Taniti City every 30 minutes.',
+                expansion: 'Airport expansion currently in progress - larger jets will be accommodated soon! Expected completion next year.',
+                tip: 'Book flights early during peak season (June-August) as capacity is currently limited'
+            },
+            sea: {
+                title: '🚢 Arriving by Sea',
+                description: 'Experience a scenic arrival at Yellow Leaf Bay via cruise ship.',
+                details: [
+                    'Weekly cruise ship service',
+                    'Docks at Yellow Leaf Bay harbor',
+                    'Tender service to shore if needed',
+                    'Port facilities with tourist information',
+                    'Walking distance to Merriton Landing',
+                    'Excursion booking available at port'
+                ],
+                facilities: 'Port facilities include welcome center, restrooms, and local craft vendors',
+                transport: 'Merriton Landing is a short walk from the port. Taxis and tour buses available for island exploration.',
+                schedule: 'Cruise ships typically dock on Saturdays, with 6-8 hour port calls allowing time to explore the island.',
+                tip: 'Book shore excursions in advance during cruise season for guaranteed availability'
+            }
+        };
+
+        function openArrivalModal(type) {
+            const data = arrivalData[type];
+            document.getElementById('arrivalModalTitle').textContent = data.title;
+            
+            const detailsList = data.details.map(d => `<li style="margin-bottom: 0.5rem; color: #374151;">• ${d}</li>`).join('');
+            
+            let extraSection = '';
+            if (type === 'air') {
+                extraSection = `
+                    <div class="modal-section" style="background: #f3e8ff; border: 1px solid #d8b4fe;">
+                        <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;"><i class="fas fa-clock"></i> Expansion Update</h3>
+                        <p style="color: #374151;">${data.expansion}</p>
+                    </div>
+                `;
+            } else {
+                extraSection = `
+                    <div class="modal-section" style="background: #f3e8ff; border: 1px solid #d8b4fe;">
+                        <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;"><i class="fas fa-clock"></i> Schedule</h3>
+                        <p style="color: #374151;">${data.schedule}</p>
+                    </div>
+                `;
+            }
+            
+            document.getElementById('arrivalModalBody').innerHTML = `
+                <div style="margin-bottom: 1.5rem;">
+                    <p style="font-size: 1.125rem; color: #374151;">${data.description}</p>
+                </div>
+                <div class="modal-section" style="background: #dbeafe; border: 1px solid #93c5fd;">
+                    <h3 style="font-size: 1.25rem; margin-bottom: 1rem;">What to Expect</h3>
+                    <ul style="list-style: none; padding: 0;">${detailsList}</ul>
+                </div>
+                <div class="modal-section" style="background: #dcfce7; border: 1px solid #86efac;">
+                    <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;"><i class="fas fa-info-circle"></i> Facilities</h3>
+                    <p style="color: #374151;">${data.facilities}</p>
+                </div>
+                <div class="modal-section" style="background: #fed7aa; border: 1px solid #fdba74;">
+                    <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;"><i class="fas fa-map-marker-alt"></i> Onward Transportation</h3>
+                    <p style="color: #374151;">${data.transport}</p>
+                </div>
+                ${extraSection}
+                <div class="modal-section" style="background: #ccfbf1; border: 1px solid #5eead4;">
+                    <p style="color: #374151;"><strong>💡 ${data.tip}</strong></p>
+                </div>
+                <div style="background: #f9fafb; border-radius: 0.5rem; padding: 1.5rem; text-align: center;">
+                    <h3 style="font-size: 1.25rem; margin-bottom: 0.75rem;">Need More Information?</h3>
+                    <p style="color: #4b5563; margin-bottom: 1rem;">Contact our tourism office for arrival assistance and travel planning.</p>
+                    <button onclick="alert('📧 Contact Us\\n\\nThis would open an arrival information form or email:\\ninfo@visittaniti.com')" class="btn-primary">Get Arrival Info</button>
+                </div>
+            `;
+            
+            document.getElementById('arrivalModal').classList.add('active');
+        }
+
+        function closeArrivalModal() {
+            document.getElementById('arrivalModal').classList.remove('active');
+        }
+
+        const activityData = {
+            beach: {
+                title: '🌊 Beach Activities',
+                description: 'Enjoy pristine beaches and water activities around Yellow Leaf Bay.',
+                details: ['White sandy beaches encircling Yellow Leaf Bay', 'Rocky coastline exploration', 'Swimming in crystal-clear waters', 'Beach volleyball and water sports', 'Sunset viewing at designated beaches'],
+                tips: 'Best time: Early morning or late afternoon to avoid midday heat'
+            },
+            rainforest: {
+                title: '🌳 Rainforest Exploration',
+                description: 'Hike through lush tropical rainforests and experience thrilling adventures.',
+                details: ['Guided rainforest hiking trails', 'Zip-lining through the canopy', 'Wildlife spotting opportunities', 'Waterfall visits', 'Photography tours'],
+                tips: 'What to bring: Comfortable shoes, water, insect repellent, camera'
+            },
+            volcano: {
+                title: '🌋 Volcano Tours',
+                description: 'Visit our small, active volcano and witness the power of nature.',
+                details: ['Guided volcano hikes', 'Viewing platform access', 'Geological education tours', 'Photography opportunities', 'Safety equipment provided'],
+                tips: 'Safety first: All tours include safety briefings and equipment'
+            },
+            fishing: {
+                title: '🐠 Fishing & Snorkeling Tours',
+                description: 'Charter fishing tours and explore underwater worlds.',
+                details: ['Deep sea fishing charters', 'Reef fishing experiences', 'Snorkeling in coral reefs', 'Equipment provided', 'Experienced local guides'],
+                tips: 'Most tours include all equipment and refreshments'
+            },
+            sightseeing: {
+                title: '📷 Sightseeing Tours',
+                description: 'Explore the island and experience native architecture.',
+                details: ['Boat tours around the island', 'Bus tours to major attractions', 'Taniti City walking tours', 'Native architecture viewing', 'Historical site visits'],
+                tips: 'Tours available in English and local language'
+            },
+            helicopter: {
+                title: '🚁 Helicopter Rides',
+                description: 'Experience breathtaking aerial views of the entire island.',
+                details: ['Island overview tours (30-45 minutes)', 'Volcano aerial viewing', 'Coastal photography flights', 'Sunset tours available', 'Professional pilot narration'],
+                tips: 'Book in advance - popular during peak season'
+            },
+            culture: {
+                title: '🎨 Culture & Arts',
+                description: 'Immerse yourself in local history and artistic expressions.',
+                details: ['Local History Museum', 'Multiple art galleries', 'Traditional craft demonstrations', 'Local artist exhibits', 'Cultural performances (seasonal)'],
+                tips: 'Many galleries offer works by local Tanitian artists'
+            },
+            nightlife: {
+                title: '🎵 Nightlife',
+                description: 'Experience Taniti after dark with music and entertainment.',
+                details: ['Dance club in Merriton Landing', 'Multiple pubs and bars', 'Local microbrewery', 'Live music (weekends)', 'Beach bonfires (seasonal)'],
+                tips: 'Remember: Alcohol not served between midnight and 9 AM'
+            },
+            entertainment: {
+                title: '🎬 Entertainment',
+                description: 'Indoor entertainment options for all ages.',
+                details: ['Movie theater showing latest films', 'Arcade games', 'Bowling alley', 'Family-friendly activities', 'Air-conditioned venues'],
+                tips: 'Great options for rainy days or evening relaxation'
+            },
+            golf: {
+                title: '⛳ Golf Course',
+                description: 'Nine-hole golf course opening next year.',
+                details: ['Nine-hole course (opening next year)', 'Scenic island views', 'Equipment rental available', 'Pro shop planned', 'Lessons will be offered'],
+                tips: 'Check back next year for opening dates and tee times'
+            }
+        };
+
+        function openActivityModal(type) {
+            const data = activityData[type];
+            document.getElementById('activityModalTitle').textContent = data.title;
+            
+            const detailsList = data.details.map(d => `<li style="margin-bottom: 0.5rem; color: #374151;">• ${d}</li>`).join('');
+            
+            document.getElementById('activityModalBody').innerHTML = `
+                <div style="margin-bottom: 1.5rem;">
+                    <p style="font-size: 1.125rem; color: #374151;">${data.description}</p>
+                </div>
+                <div class="modal-section" style="background: #dbeafe; border: 1px solid #93c5fd;">
+                    <h3 style="font-size: 1.25rem; margin-bottom: 1rem;">What to Expect</h3>
+                    <ul style="list-style: none; padding: 0;">${detailsList}</ul>
+                </div>
+                <div class="modal-section" style="background: #f3e8ff; border: 1px solid #d8b4fe;">
+                    <p style="color: #374151;"><strong>💡 ${data.tips}</strong></p>
+                </div>
+                <div style="background: #f9fafb; border-radius: 0.5rem; padding: 1.5rem; text-align: center;">
+                    <h3 style="font-size: 1.25rem; margin-bottom: 0.75rem;">Ready to experience this?</h3>
+                    <p style="color: #4b5563; margin-bottom: 1rem;">Reserve your spot — quick and easy.</p>
+                    <button onclick="openBookingModal('activity', document.getElementById('activityModalTitle').textContent)" class="btn-primary" style="font-size: 1rem; padding: 0.75rem 2rem;">Book Now</button>
+                </div>
+            `;
+            
+            document.getElementById('activityModal').classList.add('active');
+        }
+
+        function closeActivityModal() {
+            document.getElementById('activityModal').classList.remove('active');
+        }
+
+        const diningData = {
+            local: {
+                title: '🐟 Local Cuisine',
+                count: '5 Restaurants',
+                description: 'Experience authentic Tanitian flavors with fresh-caught fish and locally grown rice.',
+                specialties: ['Fresh local fish prepared daily', 'Traditional rice dishes', 'Tropical fruit platters', 'Coconut-based sauces and curries', 'Grilled seafood platters', 'Local vegetable dishes'],
+                atmosphere: 'Family-friendly restaurants with ocean views and traditional decor',
+                priceRange: '$$ - Moderate',
+                note: 'Perfect for: Travelers seeking authentic local flavors and fresh seafood'
+            },
+            american: {
+                title: '🍔 American Style',
+                count: '3 Restaurants',
+                description: 'Enjoy familiar American favorites with a tropical island twist.',
+                specialties: ['Burgers and steaks', 'BBQ specialties', 'Classic breakfast all day', 'Sandwiches and wraps', 'American-style pizza', 'Comfort food favorites'],
+                atmosphere: 'Casual dining with indoor and outdoor seating options',
+                priceRange: '$$ - Moderate',
+                note: 'Perfect for: Families and travelers looking for familiar comfort foods'
+            },
+            panasian: {
+                title: '🥢 Pan-Asian Cuisine',
+                count: '2 Restaurants',
+                description: 'Explore diverse Asian flavors from Chinese to Japanese to Thai.',
+                specialties: ['Sushi and sashimi', 'Thai curries and noodles', 'Chinese stir-fry dishes', 'Ramen and pho', 'Dim sum selections', 'Vegetarian and vegan options'],
+                atmosphere: 'Modern, elegant dining spaces with authentic Asian decor',
+                priceRange: '$$-$$$ - Moderate to Upscale',
+                note: 'Perfect for: Food enthusiasts and those seeking diverse Asian flavors'
+            }
+        };
+
+        function openDiningModal(type) {
+            const data = diningData[type];
+            document.getElementById('diningModalTitle').textContent = data.title;
+            
+            const specialtiesList = data.specialties.map(s => `<li style="margin-bottom: 0.5rem; color: #374151;">• ${s}</li>`).join('');
+            
+            document.getElementById('diningModalBody').innerHTML = `
+                <div class="modal-section" style="background: #ccfbf1; border: 1px solid #5eead4;">
+                    <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;"><i class="fas fa-utensils"></i> Available Options</h3>
+                    <p style="font-size: 1.125rem; font-weight: bold;">${data.count}</p>
+                </div>
+                <div style="margin-bottom: 1.5rem;">
+                    <p style="font-size: 1.125rem; color: #374151;">${data.description}</p>
+                </div>
+                <div class="modal-section" style="background: #dbeafe; border: 1px solid #93c5fd;">
+                    <h3 style="font-size: 1.25rem; margin-bottom: 1rem;">Popular Dishes & Specialties</h3>
+                    <ul style="list-style: none; padding: 0;">${specialtiesList}</ul>
+                </div>
+                <div class="modal-section" style="background: #dcfce7; border: 1px solid #86efac;">
+                    <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;"><i class="fas fa-map-marker-alt"></i> Atmosphere</h3>
+                    <p style="color: #374151;">${data.atmosphere}</p>
+                </div>
+                <div class="modal-section" style="background: #fed7aa; border: 1px solid #fdba74;">
+                    <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;"><i class="fas fa-dollar-sign"></i> Price Range</h3>
+                    <p style="font-size: 1.125rem; font-weight: bold;">${data.priceRange}</p>
+                </div>
+                <div class="modal-section" style="background: #f3e8ff; border: 1px solid #d8b4fe;">
+                    <p style="color: #374151;"><strong>💡 ${data.note}</strong></p>
+                </div>
+                <div style="background: #f9fafb; border-radius: 0.5rem; padding: 1.5rem; text-align: center;">
+                    <h3 style="font-size: 1.25rem; margin-bottom: 0.75rem;">Ready to Dine?</h3>
+                    <p style="color: #4b5563; margin-bottom: 1rem;">Contact restaurants directly or visit our tourism office for recommendations.</p>
+                    <button onclick="alert('📧 Contact Us\\n\\nThis would open a dining inquiry form or email:\\ninfo@visittaniti.com')" class="btn-primary">Get Recommendations</button>
+                </div>
+            `;
+            
+            document.getElementById('diningModal').classList.add('active');
+        }
+
+        function closeDiningModal() {
+            document.getElementById('diningModal').classList.remove('active');
+        }
+
+        const transportData = {
+            publicbus: {
+                title: '🚌 Public Buses',
+                description: 'Affordable and convenient transportation throughout Taniti City.',
+                cost: '$2-5 per ride',
+                details: ['Serves all major areas of Taniti City', 'Operates daily from 5:00 AM to 11:00 PM', 'Buses run every 15-30 minutes', 'Air-conditioned vehicles', 'Accessible for wheelchairs', 'Route maps available at stops'],
+                routes: 'Multiple routes covering downtown, residential areas, and beach access points',
+                payment: 'Cash accepted (exact change preferred), monthly passes available',
+                tip: 'Purchase a weekly pass for unlimited rides and save money!'
+            },
+            privatebus: {
+                title: '🚐 Private Buses',
+                description: 'Comfortable transportation to all parts of the island beyond Taniti City.',
+                cost: '$10-25 per trip',
+                details: ['Serves the entire island', 'Scheduled routes to major attractions', 'Private charter options available', 'Comfortable seating with A/C', 'Luggage storage included', 'Tour guide services available'],
+                routes: 'Connects Taniti City to beaches, rainforest, volcano, and remote villages',
+                payment: 'Cash and credit cards accepted, advance booking recommended',
+                tip: 'Book in advance during peak tourist season for guaranteed seating'
+            },
+            taxi: {
+                title: '🚕 Taxis',
+                description: 'On-demand transportation available throughout Taniti City.',
+                cost: '$10-30 depending on distance',
+                details: ['Available 24/7 in Taniti City', 'Metered fares (regulated by government)', 'Radio dispatch service', 'English-speaking drivers', 'Accepts cash and credit cards', 'Can accommodate up to 4 passengers'],
+                routes: 'Door-to-door service anywhere in Taniti City and nearby areas',
+                payment: 'Cash preferred, major credit cards accepted in most taxis',
+                tip: 'Ask your hotel to call a taxi for you or find them at designated taxi stands'
+            },
+            rental: {
+                title: '🚗 Rental Cars',
+                description: 'Explore the island at your own pace with a rental vehicle.',
+                cost: '$40-80 per day',
+                details: ['Multiple vendors near the airport', 'Variety of vehicle types available', "Valid driver's license required", 'Insurance options available', 'GPS navigation included', 'Unlimited mileage options'],
+                routes: 'Freedom to explore the entire island on well-maintained roads',
+                payment: 'Credit card required for deposit, cash or card for rental fees',
+                tip: 'Book online in advance for better rates and guaranteed availability'
+            },
+            bicycle: {
+                title: '🚲 Bicycles',
+                description: 'Eco-friendly and healthy way to explore Taniti City and nearby areas.',
+                cost: '$10-20 per day',
+                details: ['Multiple rental vendors available', 'Helmets provided (required by law)', 'Variety of bike styles available', 'Locks and baskets included', 'Hourly or daily rental options', 'Bike maps and route suggestions provided'],
+                routes: 'Best for Taniti City and Merriton Landing (flat, walkable areas)',
+                payment: 'Cash or credit card, ID required for rental',
+                tip: 'Remember: helmets are required by law. All vendors provide them free with rental'
+            }
+        };
+
+        function openTransportModal(type) {
+            const data = transportData[type];
+            document.getElementById('transportModalTitle').textContent = data.title;
+            
+            const detailsList = data.details.map(d => `<li style="margin-bottom: 0.5rem; color: #374151;">• ${d}</li>`).join('');
+            
+            document.getElementById('transportModalBody').innerHTML = `
+                <div style="margin-bottom: 1.5rem;">
+                    <p style="font-size: 1.125rem; color: #374151;">${data.description}</p>
+                </div>
+                <div class="modal-section" style="background: #ccfbf1; border: 1px solid #5eead4;">
+                    <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;"><i class="fas fa-dollar-sign"></i> Typical Cost</h3>
+                    <p style="font-size: 1.125rem; font-weight: bold;">${data.cost}</p>
+                </div>
+                <div class="modal-section" style="background: #dbeafe; border: 1px solid #93c5fd;">
+                    <h3 style="font-size: 1.25rem; margin-bottom: 1rem;">Service Details</h3>
+                    <ul style="list-style: none; padding: 0;">${detailsList}</ul>
+                </div>
+                <div class="modal-section" style="background: #dcfce7; border: 1px solid #86efac;">
+                    <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;"><i class="fas fa-map-marker-alt"></i> Routes & Coverage</h3>
+                    <p style="color: #374151;">${data.routes}</p>
+                </div>
+                <div class="modal-section" style="background: #fed7aa; border: 1px solid #fdba74;">
+                    <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;"><i class="fas fa-info-circle"></i> Payment Options</h3>
+                    <p style="color: #374151;">${data.payment}</p>
+                </div>
+                <div class="modal-section" style="background: #f3e8ff; border: 1px solid #d8b4fe;">
+                    <p style="color: #374151;"><strong>💡 ${data.tip}</strong></p>
+                </div>
+                <div style="background: #f9fafb; border-radius: 0.5rem; padding: 1.5rem; text-align: center;">
+                    <h3 style="font-size: 1.25rem; margin-bottom: 0.75rem;">Need More Information?</h3>
+                    <p style="color: #4b5563; margin-bottom: 1rem;">Contact our tourism office for schedules, rates, and booking assistance.</p>
+                    <button onclick="alert('📧 Contact Us\\n\\nThis would open a transportation inquiry form or email:\\ninfo@visittaniti.com')" class="btn-primary">Get Transportation Info</button>
+                </div>
+            `;
+            
+            document.getElementById('transportModal').classList.add('active');
+        }
+
+        function closeTransportModal() {
+            document.getElementById('transportModal').classList.remove('active');
+        }
+
+        const lodgingData = {
+            resort: {
+                title: '⭐ Four-Star Resort',
+                price: '$$$$ - Luxury',
+                description: 'Experience world-class luxury at our premier beachfront resort.',
+                amenities: ['Beachfront location with private beach access', 'Multiple pools and hot tubs', 'Full-service spa and fitness center', 'Five on-site restaurants and bars', 'Concierge and room service 24/7', 'Water sports equipment rental', 'Kids club and family activities', 'Free Wi-Fi and parking'],
+                note: 'Perfect for: Luxury travelers, honeymooners, and special occasions'
+            },
+            hotel: {
+                title: '🏨 Family Hotels',
+                price: '$$ - Moderate',
+                description: 'Authentic Tanitian hospitality in small, family-owned properties.',
+                amenities: ['Personal service from local owners', 'Clean, comfortable rooms', 'Many located in Taniti City', 'Walking distance to restaurants', 'Local tips and recommendations', 'Affordable rates', 'Authentic cultural experience', 'Free Wi-Fi in most properties'],
+                note: 'Perfect for: Budget-conscious travelers seeking authentic experiences'
+            },
+            bnb: {
+                title: '🏡 Bed & Breakfasts',
+                price: '$$ - Moderate',
+                description: 'Charming accommodations with homemade breakfast included.',
+                amenities: ['Homemade breakfast each morning', 'Cozy, unique rooms', 'Personal attention from hosts', 'Often in scenic locations', 'Local knowledge and insider tips', 'Quiet, relaxing atmosphere', 'Growing selection across the island', 'Great for longer stays'],
+                note: 'Perfect for: Couples, solo travelers, and those seeking a home-away-from-home'
+            },
+            hostel: {
+                title: '🏢 Budget Hostel',
+                price: '$ - Budget',
+                description: 'Affordable shared and private rooms for backpackers and budget travelers.',
+                amenities: ['Dormitory and private room options', 'Shared kitchen facilities', 'Common areas to meet travelers', 'Luggage storage', 'Tour booking assistance', 'Laundry facilities', 'Free Wi-Fi', 'Central Taniti City location'],
+                note: 'Perfect for: Backpackers, solo travelers, and budget-conscious adventurers'
+            }
+        };
+
+        function openLodgingModal(type) {
+            const data = lodgingData[type];
+            document.getElementById('lodgingModalTitle').textContent = data.title;
+            
+            const amenitiesList = data.amenities.map(a => `<li style="margin-bottom: 0.5rem;">• ${a}</li>`).join('');
+            
+            document.getElementById('lodgingModalBody').innerHTML = `
+                <div class="modal-section" style="background: #ccfbf1; border: 1px solid #5eead4;">
+                    <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;"><i class="fas fa-dollar-sign"></i> Price Range</h3>
+                    <p style="font-size: 1.125rem; font-weight: bold;">${data.price}</p>
+                </div>
+                <div style="margin-bottom: 1.5rem;">
+                    <p style="font-size: 1.125rem; color: #374151;">${data.description}</p>
+                </div>
+                <div class="modal-section" style="background: #dbeafe; border: 1px solid #93c5fd;">
+                    <h3 style="font-size: 1.25rem; margin-bottom: 1rem;"><i class="fas fa-star"></i> Amenities & Features</h3>
+                    <ul style="list-style: none; padding: 0; color: #374151;">${amenitiesList}</ul>
+                </div>
+                <div class="modal-section" style="background: #f3e8ff; border: 1px solid #d8b4fe;">
+                    <p style="color: #374151;"><strong>💡 ${data.note}</strong></p>
+                </div>
+                <div style="background: #f9fafb; border-radius: 0.5rem; padding: 1.5rem; text-align: center;">
+                    <h3 style="font-size: 1.25rem; margin-bottom: 0.75rem;">Ready to book your stay?</h3>
+                    <p style="color: #4b5563; margin-bottom: 1rem;">Reserve your room and we'll handle the rest.</p>
+                    <button onclick="openBookingModal('lodging', document.getElementById('lodgingModalTitle').textContent)" class="btn-primary" style="font-size: 1rem; padding: 0.75rem 2rem;">Book Now</button>
+                </div>
+            `;
+            
+            document.getElementById('lodgingModal').classList.add('active');
+        }
+
+        function closeLodgingModal() {
+            document.getElementById('lodgingModal').classList.remove('active');
+        }
+    </script>
+</body>
+</html>
